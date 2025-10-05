@@ -1,22 +1,20 @@
 import * as React from 'react';
-import { useColorScheme } from '@mui/joy/styles';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Checkbox from '@mui/joy/Checkbox';
-import Divider from '@mui/joy/Divider';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
-import IconButton, { type IconButtonProps } from '@mui/joy/IconButton';
-import Link from '@mui/joy/Link';
 import Input from '@mui/joy/Input';
 import Typography from '@mui/joy/Typography';
 import Stack from '@mui/joy/Stack';
-import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
-import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
 import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded';
+import ColorSchemeToggle from "../components/ColorSchemeToggle.tsx";
+import IconButton from "@mui/joy/IconButton";
+import {useAuth} from "../contexts/AuthContext.tsx";
+import {Navigate, useNavigate} from "react-router";
 
 interface FormElements extends HTMLFormControlsCollection {
-    email: HTMLInputElement;
+    login: HTMLInputElement;
     password: HTMLInputElement;
     persistent: HTMLInputElement;
 }
@@ -24,31 +22,27 @@ interface SignInFormElement extends HTMLFormElement {
     readonly elements: FormElements;
 }
 
-function ColorSchemeToggle(props: IconButtonProps) {
-    const { onClick, ...other } = props;
-    const { mode, setMode } = useColorScheme();
-    const [mounted, setMounted] = React.useState(false);
-
-    React.useEffect(() => setMounted(true), []);
-
-    return (
-        <IconButton
-            aria-label="toggle light/dark mode"
-            size="sm"
-            variant="outlined"
-            disabled={!mounted}
-            onClick={(event) => {
-                setMode(mode === 'light' ? 'dark' : 'light');
-                onClick?.(event);
-            }}
-            {...other}
-        >
-            {mode === 'light' ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
-        </IconButton>
-    );
-}
-
 export default function SingIn() {
+    const { login, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
+    if (isAuthenticated) return <Navigate to="/" replace/>
+
+    const handleSubmit = (event: React.FormEvent<SignInFormElement>) => {
+        event.preventDefault();
+        const formElements = event.currentTarget.elements;
+        const data = {
+            login: formElements.login.value,
+            password: formElements.password.value,
+            persistent: formElements.persistent.checked,
+        };
+
+        // Здесь можно отправить данные на бэкенд
+        // Пока что просто логинимся с mock-данными
+        login({ email: data.login }); // Можно передать больше данных
+        navigate('/'); // Переход на главную страницу
+    };
+
     return (
         <>
             <Box
@@ -84,7 +78,7 @@ export default function SingIn() {
                             <IconButton variant="soft" color="primary" size="sm">
                                 <BadgeRoundedIcon />
                             </IconButton>
-                            <Typography level="title-lg">Company logo</Typography>
+                            <Typography level="title-lg">PolyNavigation</Typography>
                         </Box>
                         <ColorSchemeToggle />
                     </Box>
@@ -114,41 +108,15 @@ export default function SingIn() {
                         <Stack sx={{ gap: 4, mb: 2 }}>
                             <Stack sx={{ gap: 1 }}>
                                 <Typography component="h1" level="h3">
-                                    Sign in
-                                </Typography>
-                                <Typography level="body-sm">
-                                    New to company?{' '}
-                                    <Link href="#replace-with-a-link" level="title-sm">
-                                        Sign up!
-                                    </Link>
+                                    Войти
                                 </Typography>
                             </Stack>
                         </Stack>
-                        <Divider
-                            sx={(theme) => ({
-                                [theme.getColorSchemeSelector('light')]: {
-                                    color: { xs: '#FFF', md: 'text.tertiary' },
-                                },
-                            })}
-                        >
-                            or
-                        </Divider>
                         <Stack sx={{ gap: 4, mt: 2 }}>
-                            <form
-                                onSubmit={(event: React.FormEvent<SignInFormElement>) => {
-                                    event.preventDefault();
-                                    const formElements = event.currentTarget.elements;
-                                    const data = {
-                                        email: formElements.email.value,
-                                        password: formElements.password.value,
-                                        persistent: formElements.persistent.checked,
-                                    };
-                                    alert(JSON.stringify(data, null, 2));
-                                }}
-                            >
+                            <form onSubmit={handleSubmit}>
                                 <FormControl required>
-                                    <FormLabel>Email</FormLabel>
-                                    <Input type="email" name="email" />
+                                    <FormLabel>Login</FormLabel>
+                                    <Input type="text" name="login" />
                                 </FormControl>
                                 <FormControl required>
                                     <FormLabel>Password</FormLabel>
@@ -163,12 +131,9 @@ export default function SingIn() {
                                         }}
                                     >
                                         <Checkbox size="sm" label="Remember me" name="persistent" />
-                                        <Link level="title-sm" href="#replace-with-a-link">
-                                            Forgot your password?
-                                        </Link>
                                     </Box>
                                     <Button type="submit" fullWidth>
-                                        Sign in
+                                        Войти
                                     </Button>
                                 </Stack>
                             </form>
@@ -176,13 +141,13 @@ export default function SingIn() {
                     </Box>
                     <Box component="footer" sx={{ py: 3 }}>
                         <Typography level="body-xs" sx={{ textAlign: 'center' }}>
-                            © Your company {new Date().getFullYear()}
+                            © Mospolynavigation {new Date().getFullYear()}
                         </Typography>
                     </Box>
                 </Box>
             </Box>
             <Box
-                sx={(theme) => ({
+                sx={{
                     height: '100%',
                     position: 'fixed',
                     right: 0,
@@ -196,13 +161,7 @@ export default function SingIn() {
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
-                    backgroundImage:
-                        'url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)',
-                    [theme.getColorSchemeSelector('dark')]: {
-                        backgroundImage:
-                            'url(https://images.unsplash.com/photo-1572072393749-3ca9c8ea0831?auto=format&w=1000&dpr=2)',
-                    },
-                })}
+                }}
             />
         </>
     );

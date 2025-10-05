@@ -16,9 +16,11 @@ import TableViewIcon from '@mui/icons-material/TableView';
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { useLocation, useNavigate } from "react-router";
 
 import ColorSchemeToggle from './ColorSchemeToggle.tsx';
 import { closeSidebar } from '../utils';
+import {useAuth} from "../contexts/AuthContext.tsx";
 
 function Toggler({
                      defaultExpanded = false,
@@ -55,6 +57,22 @@ function Toggler({
 }
 
 export default function Sidebar() {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { logout } = useAuth();
+
+    const handleNavigate = (to: string) => {
+        navigate(to);
+        closeSidebar(); // Закрываем sidebar на мобильных
+    };
+
+    const handleLogout = () => {
+        logout(); // Выходим
+        navigate('/login'); // Перенаправляем на логин
+    };
+
+    const isActive = (path: string) => location.pathname === path;
+
     return (
         <Sheet
             className="Sidebar"
@@ -132,7 +150,7 @@ export default function Sidebar() {
                     }}
                 >
                     <ListItem>
-                        <ListItemButton>
+                        <ListItemButton selected={isActive('/')} onClick={() => handleNavigate("/")}>
                             <HomeRoundedIcon />
                             <ListItemContent>
                                 <Typography level="title-sm">Главная</Typography>
@@ -141,7 +159,7 @@ export default function Sidebar() {
                     </ListItem>
 
                     <ListItem>
-                        <ListItemButton>
+                        <ListItemButton selected={isActive('/dashboards')} onClick={() => handleNavigate("/dashboards")}>
                             <DashboardRoundedIcon />
                             <ListItemContent>
                                 <Typography level="title-sm">Дэшборды</Typography>
@@ -206,13 +224,13 @@ export default function Sidebar() {
                         >
                             <List sx={{ gap: 0.5 }}>
                                 <ListItem sx={{ mt: 0.5 }}>
-                                    <ListItemButton selected>Мой профиль</ListItemButton>
+                                    <ListItemButton selected={isActive('/profile')} onClick={() => handleNavigate("/profile")}>Мой профиль</ListItemButton>
                                 </ListItem>
                                 <ListItem>
-                                    <ListItemButton>Все пользователи</ListItemButton>
+                                    <ListItemButton selected={isActive('/users')} onClick={() => handleNavigate("/users")}>Все пользователи</ListItemButton>
                                 </ListItem>
                                 <ListItem>
-                                    <ListItemButton>Права и разрешения</ListItemButton>
+                                    <ListItemButton selected={isActive('/roles')}>Права и разрешения</ListItemButton>
                                 </ListItem>
                             </List>
                         </Toggler>
@@ -229,7 +247,7 @@ export default function Sidebar() {
                     <Typography level="title-sm">Placeholder Name</Typography>
                     <Typography level="body-xs">Placeholder login</Typography>
                 </Box>
-                <IconButton size="sm" variant="plain" color="neutral">
+                <IconButton size="sm" variant="plain" color="neutral" onClick={handleLogout}>
                     <LogoutRoundedIcon />
                 </IconButton>
             </Box>
