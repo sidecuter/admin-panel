@@ -1,35 +1,33 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { CssVarsProvider } from '@mui/joy/styles';
+import CssBaseline from '@mui/joy/CssBaseline';
+import { BrowserRouter, Routes, Route } from 'react-router';
 
-function App() {
-  const [count, setCount] = useState(0)
+import SignIn from './pages/SignIn.tsx'
+import Layout from "./components/Layout.tsx";
+import Home from "./pages/Home.tsx";
+import Profile from "./pages/Profile.tsx";
+import Users from "./pages/Users.tsx"
+import {AuthProvider} from "./contexts/AuthContext.tsx";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+export default function App() {
+    return (
+        <AuthProvider>
+            <CssVarsProvider disableTransitionOnChange defaultColorScheme={'dark'}>
+                <CssBaseline />
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/login" element={<SignIn />}/>
+                        <Route path="/" element={<Layout />}>
+                            <Route index element={<Home />}></Route>
+                            <Route path="users">
+                                <Route index element={<Users />} />
+                                <Route path=":id" element={<Profile />} />
+                            </Route>
+                            <Route path="profile" element={<Profile />} />
+                        </Route>
+                    </Routes>
+                </BrowserRouter>
+            </CssVarsProvider>
+        </AuthProvider>
+    );
 }
-
-export default App
