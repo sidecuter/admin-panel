@@ -72,6 +72,7 @@ export default function Sidebar() {
     };
 
     const isActive = (path: string) => location.pathname === path;
+    const isPartOf = (path: string) => location.pathname.startsWith(path);
 
     return (
         <Sheet
@@ -169,6 +170,7 @@ export default function Sidebar() {
 
                     <ListItem nested>
                         <Toggler
+                            defaultExpanded={isPartOf('/tables')}
                             renderToggle={({ open, setOpen }) => (
                                 <ListItemButton onClick={() => setOpen(!open)}>
                                     <TableViewIcon />
@@ -207,7 +209,7 @@ export default function Sidebar() {
                     </ListItem>
                     <ListItem nested>
                         <Toggler
-                            defaultExpanded
+                            defaultExpanded={isPartOf('/users')}
                             renderToggle={({ open, setOpen }) => (
                                 <ListItemButton onClick={() => setOpen(!open)}>
                                     <GroupRoundedIcon />
@@ -223,9 +225,6 @@ export default function Sidebar() {
                             )}
                         >
                             <List sx={{ gap: 0.5 }}>
-                                <ListItem sx={{ mt: 0.5 }}>
-                                    <ListItemButton selected={isActive('/profile')} onClick={() => handleNavigate("/profile")}>Мой профиль</ListItemButton>
-                                </ListItem>
                                 <ListItem>
                                     <ListItemButton selected={isActive('/users')} onClick={() => handleNavigate("/users")}>Все пользователи</ListItemButton>
                                 </ListItem>
@@ -243,7 +242,7 @@ export default function Sidebar() {
                     variant="outlined"
                     size="sm"
                 />
-                <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Box sx={{ minWidth: 0, flex: 1, '&:hover': {cursor: 'pointer'} }} onClick={() => handleNavigate('/profile')}>
                     <Typography level="title-sm">Placeholder Name</Typography>
                     <Typography level="body-xs">Placeholder login</Typography>
                 </Box>
