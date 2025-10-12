@@ -11,7 +11,7 @@ import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded';
 import ColorSchemeToggle from "../components/ColorSchemeToggle.tsx";
 import IconButton from "@mui/joy/IconButton";
 import {useAuth} from "../contexts/AuthContext.tsx";
-import {Navigate, useNavigate} from "react-router";
+import {Navigate} from "react-router";
 
 interface FormElements extends HTMLFormControlsCollection {
     login: HTMLInputElement;
@@ -24,23 +24,21 @@ interface SignInFormElement extends HTMLFormElement {
 
 export default function SingIn() {
     const { login, isAuthenticated } = useAuth();
-    const navigate = useNavigate();
 
     if (isAuthenticated) return <Navigate to="/" replace/>
 
-    const handleSubmit = (event: React.FormEvent<SignInFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<SignInFormElement>) => {
         event.preventDefault();
         const formElements = event.currentTarget.elements;
-        const data = {
-            login: formElements.login.value,
-            password: formElements.password.value,
-            persistent: formElements.persistent.checked,
-        };
+        const username = formElements.login.value;
+        const password = formElements.password.value;
 
-        // Здесь можно отправить данные на бэкенд
-        // Пока что просто логинимся с mock-данными
-        login({ email: data.login }); // Можно передать больше данных
-        navigate('/'); // Переход на главную страницу
+        try {
+            await login({ username, password });
+        } catch (error) {
+            console.error('Login failed:', error);
+            alert('Неверный логин или пароль');
+        }
     };
 
     return (
