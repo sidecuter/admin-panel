@@ -11,10 +11,10 @@ import {AuthProvider} from "./contexts/AuthContext.tsx";
 
 export default function App() {
     return (
-        <AuthProvider>
-            <CssVarsProvider disableTransitionOnChange defaultColorScheme={'dark'}>
-                <CssBaseline />
-                <BrowserRouter>
+        <CssVarsProvider disableTransitionOnChange defaultColorScheme={'dark'}>
+            <CssBaseline />
+            <BrowserRouter>
+                <AuthProvider>
                     <Routes>
                         <Route path="/login" element={<SignIn />}/>
                         <Route path="/" element={<Layout />}>
@@ -26,8 +26,8 @@ export default function App() {
                             <Route path="profile" element={<Profile />} />
                         </Route>
                     </Routes>
-                </BrowserRouter>
-            </CssVarsProvider>
-        </AuthProvider>
+                </AuthProvider>
+            </BrowserRouter>
+        </CssVarsProvider>
     );
 }

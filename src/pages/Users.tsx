@@ -1,11 +1,11 @@
-import { Box, Typography } from '@mui/joy';
+import { Typography } from '@mui/joy';
+import Page from "../components/Page.tsx";
 
 function Users() {
     return (
-        <Box p={2}>
-            <Typography level="h2">Просмотр пользователей</Typography>
+        <Page headerText="Просмотр пользователей">
             <Typography>Тут должен быть просмотр пользователей</Typography>
-        </Box>
+        </Page>
     );
 }
 

@@ -1,11 +1,11 @@
-import { Box, Typography } from '@mui/joy';
+import { Typography } from '@mui/joy';
+import Page from "../components/Page.tsx";
 
 function Home() {
     return (
-        <Box p={2}>
-            <Typography level="h2">Домашняя страница</Typography>
+        <Page headerText="Домашняя страница">
             <Typography>Это домашняя страница проекта</Typography>
-        </Box>
+        </Page>
     );
 }
 
